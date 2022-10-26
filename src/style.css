@@ -1,0 +1,48 @@
+.App {
+    font-family: sans-serif;
+    text-align: center;
+  }
+  .graph-container {
+    height: 700px;
+    width: 70%;
+    flex-grow: 3;
+    border-right: 1px solid black;
+  }
+  .data-input-class {
+    width: 80%;
+    height: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .main-container {
+    display: flex;
+  }
+  .summary {
+    flex-grow: 1;
+    background-color: #f9f8fe;
+    box-shadow: 0px 5px 10px 1px #888888;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    width: 15%;
+  }
+  .summary-text {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    font-weight: 500;
+  }
+  .summary-header {
+    font-weight: 800;
+    padding-bottom: 10px;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+  }
+  
