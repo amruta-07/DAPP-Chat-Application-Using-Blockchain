@@ -2,6 +2,7 @@ import './App.css'
 import { useEffect, useState, useReducer } from 'react'
 import Gun from 'gun'
 import { faker } from '@faker-js/faker';
+import Cryptojs from 'crypto-js'
 
 // Port 5050 is the port of the gun server we previously created
 const gun = Gun({
@@ -30,12 +31,22 @@ function App() {
   useEffect(() => {
     const messagesRef = gun.get('MESSAGES')
     messagesRef.map().on(m => {
-      dispatch({
-        sender: m.sender,
-        avatar: m.avatar,
-        content: m.content,
-        timestamp: m.timestamp
-      })
+      try{
+
+        dispatch({
+          sender: m.sender,
+          avatar: m.avatar,
+          content: Cryptojs.AES.decrypt(m.content,"amruta").toString(Cryptojs.enc.Utf8),
+          timestamp: m.timestamp
+        })
+      }catch(e){
+        dispatch({
+          sender: m.sender,
+          avatar: m.avatar,
+          content: m.content,
+          timestamp: m.timestamp
+        })
+      }
     })
   }, [])
 
@@ -63,7 +74,7 @@ function App() {
     const messageObject = {
       sender: faker.name.firstName()+" "+faker.name.lastName()+" by shivam"+new Date().getTime(),
       avatar: faker.image.avatar(),
-      content: messageText,
+      content:Cryptojs.AES.encrypt(messageText,"amruta").toString(),
       timestamp: Date().substring(16, 21)
     }
 
