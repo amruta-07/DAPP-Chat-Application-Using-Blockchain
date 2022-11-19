@@ -1,102 +1,101 @@
-import './App.css';
-import { useState, useEffect } from 'react';
+import './App.css'
+import { useEffect, useState, useReducer } from 'react'
+import Gun from 'gun'
+import { faker } from '@faker-js/faker';
 
-import Alpha_chart from './Alpha_chart';
-import I_Alpha_chart from './I_Alpha_chart';
-import axios from 'axios';
+// Port 5050 is the port of the gun server we previously created
+const gun = Gun({
+  peers: [
+    'https://gunserver1.herokuapp.com/gun'
+  ]
+})
 
-function App() {
-
-  const [graphData, setgraphData] = useState([])
-  const [profit, setprofit] = useState(0)
-  const [summaryData, setsummaryData] = useState({})
-  function formatData(profitData) {
-    return profitData.map((data) => ({
-      label: data.subcategory,
-      value: data.profit
-    }));
-  }
-  function rearrange(sampledata) {
-    let profit = 0;
-    const profitData = sampledata.map((item) => {
-      item.profit = item[`d__2022sale`] - item[`d__2021sale`];
-      profit += item.profit;
-      return item;
-    });
-  
-    if (profit >= 0) { //if profit is positive //sort in descending order
-      profitData.sort(function (x, y) {
-        return y.profit - x.profit;
-      });
-    } else { //if profit is negative //sort in acending order
-      profitData.sort(function (x, y) {
-        return x.profit - y.profit;
-      });
-    }
-    const multiplier = profit < 0 ? -1 : 1;
-        var data = profitData.map((data) =>( multiplier * data.profit));
-        let p_sum = 0;
-        let l_sum = 0;
-        for (var i = 0; i < data.length; ++i) {
-          if (data[i] >= 0) {
-            p_sum += data[i];
-          } else {
-            l_sum+= (data[i]);
-          }
-         
-        }
-        setsummaryData({
-          profit: Number(p_sum).toFixed(2),
-          loss: Math.abs(Number(l_sum).toFixed(2)),
-          net: Number(p_sum + l_sum).toFixed(2)
-        })
-    setprofit(profit)
-    setgraphData(formatData(profitData))
-  
-  }
-  
-  const getgraphdata = () => {
-    axios({
-      method: 'get',
-      url: 'https://run.mocky.io/v3/e2ffac92-48e0-4826-a59f-bf76fc727383',
-      
-    }).then((response) => {
-      if(response.status === 200){
-        console.log(response.data.data)
-        rearrange(response.data.data)
-      }
-
-    }).catch((err)=>{
-      console.log(err)
-      alert(err.response)
-    })
-  }
-     
-  useEffect(()=>{
-    getgraphdata()
-  },[])
-
-
-  return (
-    <div className="App"  style={{
-      padding: "20px",
-    }}>
-       <div className="main-container">
-        <div className="graph-container">
-        <Alpha_chart
-      graphData={{profit: profit,wData: graphData}}
-      />
-        </div>
-        <I_Alpha_chart
-        {...summaryData}
-        />
-      </div>
-      
-     
-
-      
-    </div>
-  );
+// The messages array will hold the chat messages
+const currentState = {
+  messages: []
 }
 
-export default App;
+// This reducer function will edit the messages array
+const reducer = (state, message) => {
+  return {
+    messages: [...state.messages,message ]
+  }
+}
+
+function App() {
+  const [messageText, setMessageText] = useState('')
+  const [state, dispatch] = useReducer(reducer, currentState)
+
+  // fires immediately the page loads
+  useEffect(() => {
+    const messagesRef = gun.get('MESSAGES')
+    messagesRef.map().on(m => {
+      dispatch({
+        sender: m.sender,
+        avatar: m.avatar,
+        content: m.content,
+        timestamp: m.timestamp
+      })
+    })
+  }, [])
+
+  // remove duplicate messages
+  const newMessagesArray = () => {
+    const formattedMessages = state.messages.filter((value, index) => {
+      const _value = JSON.stringify(value)
+      return (
+        index ===
+        state.messages.findIndex(obj => {
+          return JSON.stringify(obj) === _value
+        })
+      )
+    })
+
+    return formattedMessages
+  }
+
+  // save message to gun / send message
+  const sendMessage = () => {
+    // a reference to the current room
+    const messagesRef = gun.get('MESSAGES')
+
+    // the message object to be sent/saved
+    const messageObject = {
+      sender: faker.name.firstName()+" "+faker.name.lastName()+" by shivam"+new Date().getTime(),
+      avatar: faker.image.avatar(),
+      content: messageText,
+      timestamp: Date().substring(16, 21)
+    }
+
+    // this function sends/saves the message onto the network
+    messagesRef.set(messageObject)
+
+    // clear the text field after message has been sent
+    setMessageText('')
+  }
+
+
+  return <div className="App">
+    <main>
+      <div className='messages'>
+        <ul>
+          {newMessagesArray().map((msg, index) => [
+            <li key={index} className='message'>
+              <img alt='avatar' src={msg.avatar} />
+              <div>
+                {msg.content}
+                <span>{msg.sender}</span>
+              </div>
+            </li>
+          ])}
+        </ul>
+      </div>
+      <div className='input-box'>
+        <input placeholder='Type a message...' onChange={e => setMessageText(e.target.value)} value={messageText} />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </main>
+  </div>
+}
+
+export default App
