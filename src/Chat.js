@@ -37,7 +37,7 @@ function Chat() {
 
   // fires immediately the page loads
   useEffect(() => {
-    const messagesRef = gun.get('MESSAGES')
+    const messagesRef = gun.get('Chat')
     messagesRef.map().on(m => {//real time change
       try{
 
@@ -76,7 +76,7 @@ function Chat() {
   // save message to gun / send message
   const sendMessage = () => {
     // a reference to the current room
-    const messagesRef = gun.get('MESSAGES')
+    const messagesRef = gun.get('Chat')
 
     // the message object to be sent/saved
     const messageObject = {
@@ -96,7 +96,7 @@ function Chat() {
 
 
   return <div className="App1">
-    <main>
+    <main style={{backgroundColor:"white"}}>
       <div className='messages1' style={{backgroundColor:"white"}}>
         <ul>
           {newMessagesArray().map((msg, index) => [
