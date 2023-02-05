@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 const gun = Gun({
   peers: [
     'https://gunserver1.herokuapp.com/gun'
+    
   ]
 })
 
@@ -105,7 +106,7 @@ function Chat() {
               <div style={{fontSize:14}}>
                 {msg.content}
                 <span>{msg.sender}</span>
-              </div>
+              </div> 
             </li>
           ])}
         </ul>
