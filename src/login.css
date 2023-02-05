@@ -1,0 +1,119 @@
+.body1{
+    margin: 0;
+    padding: 0;
+    font-family: cursive, sans-serif;
+    background-image: url("./1.jpg");
+    background-size: cover;
+    overflow: hidden;
+    height: 100vh;
+}
+.a{
+    position: absolute;
+    top: 50%;
+    left: 35%;
+    transform: translate(-50%,-50%);
+    width: 400px;
+    
+}
+.a h1{
+    text-align: center;
+    padding: 0 0 20px 0;
+    border-bottom: 1px solid silver;
+    color: #2691d9;
+}
+.a form{
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+form .b{
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+}
+.b input{
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+}
+.b label{
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: #adadad;
+    transform: translatey(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    transition: .5s;
+}
+.b span::before{
+    content: '';
+    position:absolute;
+    top:40px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background:#2691d9 ;
+    transition: .5s;
+}
+.b input:focus ~ label,
+.b input:valid ~ label{           
+    top: -5px;
+    color: #2691d9;
+
+ }
+ .b input:focus ~ span::before,
+.b input:valid ~ span::before{
+    width: 100%;
+}
+.c{
+    margin: -5px 0 20px 5px;
+    color: #a6a6a6;
+    cursor: pointer;
+}
+.c:hover{
+    text-decoration: underline;
+}
+input[type="submit"]{
+    width: 100%;
+    height: 50px;
+    border: 1px solid ;
+    background: #2691d9;
+    border-radius: 25px;
+    font-size: 18px;
+    color: #e9f4fb;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+}
+input[type="submit"]:hover{
+    border-color: #2691d9;
+    background-color: rgb(44, 221, 44);
+    transition: .3s;
+}
+.d{
+    margin: 30px 0;
+    text-align: center;
+    font-size: 16px;
+    color: #666666;
+}
+.d a{
+    color:#2691d9 ;
+    text-decoration: none;
+}
+.d a:hover{
+    text-decoration: underline;
+ }
+ fieldset{
+     text-align: center;
+     background: white;
+    border-radius: 10px;
+    border: 2px solid black;
+ }
+ legend{
+     border: 2px solid black;
+     border-radius: 100px;
+ }
