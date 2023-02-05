@@ -1,112 +1,48 @@
+import React, { useEffect } from 'react'
 import './App.css'
-import { useEffect, useState, useReducer } from 'react'
-import Gun from 'gun'
-import { faker } from '@faker-js/faker';
-import Cryptojs from 'crypto-js'
-
-// Port 5050 is the port of the gun server we previously created
-const gun = Gun({
-  peers: [
-    'https://gunserver1.herokuapp.com/gun'
-  ]
-})
-
-// The messages array will hold the chat messages
-const currentState = {
-  messages: []
-}
-
-// This reducer function will edit the messages array
-const reducer = (state, message) => {
-  return {
-    messages: [...state.messages,message ]
-  }
-}
+import { Routes, Route, Navigate,useNavigate } from "react-router-dom"
+import Chat from './Chat'
+import Login from './Login'
+import RegistrationForm from './registration'
 
 function App() {
-  const [messageText, setMessageText] = useState('')
-  const [state, dispatch] = useReducer(reducer, currentState)
-
-  // fires immediately the page loads
+  const [islogin,setislogin]=React.useState(false)
+  const [name,setName]=React.useState("")
+  const [loading,setloading]=React.useState(true)
   useEffect(() => {
-    const messagesRef = gun.get('MESSAGES')
-    messagesRef.map().on(m => {
-      try{
+    const islogin_=localStorage.getItem("islogin")
+    console.log(islogin_,"sdf")
+    if(islogin_==null||islogin_==undefined||islogin_==false){
+      setislogin(false)
+    }else{
 
-        dispatch({
-          sender: m.sender,
-          avatar: m.avatar,
-          content: Cryptojs.AES.decrypt(m.content,"amruta").toString(Cryptojs.enc.Utf8),
-          timestamp: m.timestamp
-        })
-      }catch(e){
-        dispatch({
-          sender: m.sender,
-          avatar: m.avatar,
-          content: m.content,
-          timestamp: m.timestamp
-        })
-      }
-    })
-  }, [])
-
-  // remove duplicate messages
-  const newMessagesArray = () => {
-    const formattedMessages = state.messages.filter((value, index) => {
-      const _value = JSON.stringify(value)
-      return (
-        index ===
-        state.messages.findIndex(obj => {
-          return JSON.stringify(obj) === _value
-        })
-      )
-    })
-
-    return formattedMessages
-  }
-
-  // save message to gun / send message
-  const sendMessage = () => {
-    // a reference to the current room
-    const messagesRef = gun.get('MESSAGES')
-
-    // the message object to be sent/saved
-    const messageObject = {
-      sender: faker.name.firstName()+" "+faker.name.lastName()+" by shivam"+new Date().getTime(),
-      avatar: faker.image.avatar(),
-      content:Cryptojs.AES.encrypt(messageText,"amruta").toString(),
-      timestamp: Date().substring(16, 21)
+      setislogin(islogin_)
     }
+    const name_=localStorage.getItem("name")
+    setName(name_)
+    setloading(false)
+  }, [])
+  return (
+    loading?<div>Loading...</div>:
+    <div>
+    <Routes>
 
-    // this function sends/saves the message onto the network
-    messagesRef.set(messageObject)
+    <Route path="/" element={<Login/>} />
 
-    // clear the text field after message has been sent
-    setMessageText('')
-  }
+    
+   
+    
+    <Route path="/login"element={<Login/> } />
+    
+    
+    <Route path="/register" element={ <RegistrationForm/> } />
 
 
-  return <div className="App">
-    <main>
-      <div className='messages'>
-        <ul>
-          {newMessagesArray().map((msg, index) => [
-            <li key={index} className='message'>
-              <img alt='avatar' src={msg.avatar} />
-              <div>
-                {msg.content}
-                <span>{msg.sender}</span>
-              </div>
-            </li>
-          ])}
-        </ul>
-      </div>
-      <div className='input-box'>
-        <input placeholder='Type a message...' onChange={e => setMessageText(e.target.value)} value={messageText} />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-    </main>
-  </div>
+    <Route path="Chat/:username" element={<Chat/>
+    } />    
+  </Routes>
+    </div>
+  )
 }
 
 export default App
