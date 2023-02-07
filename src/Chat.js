@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 
 
-
+let email=localStorage.getItem("username")
 // Port 5050 is the port of the gun server we previously created
 const gun = Gun({
   peers: [
@@ -39,14 +39,17 @@ function Chat() {
   useEffect(() => {
     const messagesRef = gun.get('Chat')
     messagesRef.map().on(m => {//real time change
+
       try {
 
         dispatch({
           sender: m.sender,
           avatar: m.avatar,
           content: CryptoJS.AES.decrypt(m.content, m.sender).toString(CryptoJS.enc.Utf8),
-          timestamp: m.timestamp
+          timestamp: m.timestamp,
+          email:m.email
         })
+        chatdiv.current?.scrollIntoView({ behavior: 'smooth' })
       } catch (e) {
         dispatch({
           sender: m.sender,
@@ -56,6 +59,7 @@ function Chat() {
         })
       }
     })
+ 
    
 
 
@@ -82,13 +86,14 @@ function Chat() {
     // a reference to the current room
     const messagesRef = gun.get('Chat')
     let image = localStorage.getItem("profile")
-
+    let email=localStorage.getItem("username")
     // the message object to be sent/saved
     const messageObject = {
       sender: username,
       avatar: image,
       content: CryptoJS.AES.encrypt(messageText, username).toString(),
-      timestamp: Date().substring(16, 21)
+      timestamp: Date().substring(16, 21),
+      email:email
     }
     // console.log(messageObject)
 
@@ -130,13 +135,15 @@ function Chat() {
       >
         <ul>
           {newMessagesArray().map((msg, index) => [
-            <li key={index} className='message1'>
+            <div style={{width:"100%",display:'inline-block'}}>
+            <li key={index} className='message1' style={{float:msg?.email==email?"right":"left"}}>
               <img alt='avatar' src={msg.avatar} />
-              <div style={{ fontSize: 14 }}>
+              <div style={{ fontSize: 14, color:'black', textAlign:'left'}}>
                 {msg.content}
-                <span>{msg.sender}</span>
+                <span style={{ fontSize: 14, color:'black',textAlign:'left' }}>{msg.sender}</span>
               </div> 
             </li>
+            </div>
           ])}
         </ul>
       </div>

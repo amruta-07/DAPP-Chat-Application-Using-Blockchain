@@ -103,9 +103,7 @@ function Login() {
             }}
             >
 
-            <legend>
-                <img src={Account} width="45px" height="45px" />
-            </legend>
+            
             <h1>Login</h1>
 
             <form method="post"

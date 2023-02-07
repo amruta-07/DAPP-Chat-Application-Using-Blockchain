@@ -143,6 +143,7 @@ maxLength={12}
                             style={{
                                 width: "100%",
                                 display: "flex",
+                                color:"black",
 
                             }}
                         >Gender:</label>
@@ -150,9 +151,11 @@ maxLength={12}
                             style={{
                                 display: "flex",
                                 flexDirection: "row",
+                               
                             }}
                         >
-                            <label htmlFor="male">
+                            <label htmlFor="male" style={{ color:"black"}}>
+
                                 <input
                                     type="radio"
                                     name="gender"
@@ -163,7 +166,7 @@ maxLength={12}
                                 />
                                 Male
                             </label>
-                            <label htmlFor="female">
+                            <label htmlFor="female" style={{ color:"black"}}>
                                 <input
                                     type="radio"
                                     name="gender"
